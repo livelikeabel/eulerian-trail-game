@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>abel's trail game</title>
 </head>
+
 <body>
-  
+
   <section>
     <h1 style="color:tomato">Abel's trail game</h1>
     <table id="stage"></table>
   </section>
-  
+
   <script>
     'use strict';
     const Game = (() => {
-        
+
       const Block = class {
         static GET(type = parseInt(Math.random() * 5)) {
           return new Block(type);
@@ -31,49 +33,63 @@
           return this._type;
         }
       }
-      
+
       const column = 8, row = 8, blockSize = 80;
       const data = [];
-      
+
       let table;
-      // let starBlock, currBlock, isDown;
-      
-      // const selected = [];
-      
+      let startBlock, currBlock, isDown;
+
+      const selected = [];
+      const getBlock = (x, y) => {
+        const {top: T, left: L} = table.getBoundingClientRect();
+        if (x < L || x > (L + blockSize * row) || y < T || y > (T + blockSize * column)) return null;
+        return data[parseInt((y-T)/blockSize)][parseInt((x-L)/blockSize)]
+      }
+
+      const down = ({pageX: x, pageY: y}) => {
+        if (isDown) return;
+        const curr = getBlock(x, y);
+        if (!curr) return;
+        isDown = true;
+        selected.length = 0;
+        selected[0] = startBlock = currBlock = curr;
+        render();
+      }
+
       const el = tag => document.createElement(tag)
-      
+
       const render = _ => {
         table.innerHTML = '';
-        console.log(table)
-        console.log(data)
         data.forEach(row => table.appendChild(row.reduce((tr, block) => {
           tr.appendChild(el('td')).style.cssText = `
-            ${block ? `background:${block.image};`: ''}
+            ${block ? `background:${block.image};` : ''}
             width:${blockSize}px;
             height:${blockSize}px;
             cursor:pointer;`;
           return tr
         }, el('tr'))));
       };
-      
+
       return tid => {
         table = document.querySelector(tid);
-        for(let i = 0; i < row; i++) {
+        for (let i = 0; i < row; i++) {
           const r = [];
           data.push(r);
-          for(let j = 0; j < column; j++) r[j] = Block.GET();
+          for (let j = 0; j < column; j++) r[j] = Block.GET();
         }
-        // table.addEventListener('mousedown', down);
+        table.addEventListener('mousedown', down);
         // table.addEventListener('mouseup', up);
         // table.addEventListener('mouseleave', up);
         // table.addEventListener('mousemove', move);
         render();
       };
-      
-      
-      
+
+
+
     })();
     Game('#stage');
   </script>
 </body>
+
 </html>
