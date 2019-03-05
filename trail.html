@@ -56,6 +56,11 @@
         selected[0] = startBlock = currBlock = curr;
         render();
       }
+      
+      const move = ({pageX:x, pageY:y}) => {
+        if (!isDown) return;
+        console.log('moving...')
+      }
 
       const el = tag => document.createElement(tag)
 
@@ -81,7 +86,7 @@
         table.addEventListener('mousedown', down);
         // table.addEventListener('mouseup', up);
         // table.addEventListener('mouseleave', up);
-        // table.addEventListener('mousemove', move);
+        table.addEventListener('mousemove', move);
         render();
       };
 
