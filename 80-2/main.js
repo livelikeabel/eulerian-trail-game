@@ -1,17 +1,37 @@
-const Block = class {
-  // 객체지향 할 때, 클래스를 사용하는 경우에는 생성자를 봉인 한다. 무조건 팩토리 클래스를 얻어가게 한다.
-  // 받아온 타입을 기억하는데만 관심이 있다.
-  constructor(type) {
-    this._type = type;
-    this._selected = false;
-  }
-  get image(){return `url('../img/block${this._type}.png')`;}
-  get type(){return this._type;}
-}
-// static 키워드를 사용해서 안에 넣어도 된다.
-// 일관되게 모든 클래스에 똑같은 생성자를 대신하는 static함수를 만들기.
-Block.GET = (type = parseInt(Math.random() * 5)) => new Block(type);
+// Object assign : 첫번째 인자는 target, 두번째 인자부터는 객체가 들어와서 뒤에있는 객체들의 키들을 계속 타겟으로 옮겨줘서 타겟을 리턴하는 함수
 
+
+// Util layer
+const UTIL = {
+  el:v=>document.querySelector(v),
+  prop:(...arg)=>Object.assign(...arg)
+}
+
+// model
+const Item = class{
+  static GET(type, x, y){return new Item(type, x, y);}
+  constructor(_type, _x, _y){
+    UTIL.prop(this, {_type, _x, _y, _selected:false, _prev:null});
+  }
+  get type(){return this._type;}
+  get x(){return this._x;}
+  get y(){return this._y;}
+  get selected(){return this._selected;}
+  get prev(){return this._prev;}
+  pos(x, y){
+    this._x = x;
+    this._y = y;
+  }
+  // single node linked list
+  selected(item){
+    this._selected = true;
+    this._prev = item;
+  }
+  unselected(){
+    this._selected = false;
+    this._prev = null;
+  }
+}
 
 // 게임은 본체이므로 한 개만 있으면 되기 때문에 싱글톤 오브젝트로 생성
 const Game = (_=> {
