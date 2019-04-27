@@ -31,6 +31,15 @@ const Item = class{
     this._selected = false;
     this._prev = null;
   }
+  // 본인말고 본인에게 연결된 리스트에 어떤 아이템이 포함되어 있는지 확인하는 절차.
+  isSelectedList(item){
+    if(!this._prev) return false;
+    if(this._prev === item) return true;
+    else return this._prev.isSelectedList(item);
+  }
+  isBorder(item){
+    return Math.abs(this.x - item.x) < 2 && Math.abs(this.y - item.y) < 2;
+  }
 }
 
 // 게임은 본체이므로 한 개만 있으면 되기 때문에 싱글톤 오브젝트로 생성
